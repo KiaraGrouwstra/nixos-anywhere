@@ -29,6 +29,8 @@ else
 fi
 if [[ -n ${input[nixos_generate_config_path]} ]]; then
   args+=("--generate-hardware-config" "nixos-generate-config" "${input[nixos_generate_config_path]}")
+elif [[ -n ${input[nixos_facter_path]} ]]; then
+  args+=("--generate-hardware-config" "nixos-facter" "${input[nixos_facter_path]}")
 fi
 args+=(--phases "${input[phases]}")
 if [[ ${input[ssh_private_key]} != null ]]; then

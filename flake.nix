@@ -14,6 +14,13 @@
 
     # used for development
     treefmt-nix = { url = "github:numtide/treefmt-nix"; inputs.nixpkgs.follows = "nixpkgs"; };
+
+    # used in terraform to detect hardware
+    nixos-facter = {
+      url = "github:numtide/nixos-facter";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.disko.follows = "disko";
+    };
   };
 
 
@@ -27,10 +34,10 @@
         # allow to disable treefmt in downstream flakes
       ] ++ inputs.nixpkgs.lib.optional (inputs.treefmt-nix ? flakeModule) ./treefmt/flake-module.nix;
 
-      perSystem = { self', lib, ... }: {
+      perSystem = { self', lib, system, ... }: {
         checks =
           let
-            packages = lib.mapAttrs' (n: lib.nameValuePair "package-${n}") self'.packages;
+            packages = (lib.mapAttrs' (n: lib.nameValuePair "package-${n}") self'.packages) // { nixos-facter = inputs.nixos-facter.packages.${system}.default; };
             devShells = lib.mapAttrs' (n: lib.nameValuePair "devShell-${n}") self'.devShells;
           in
           packages // devShells;
