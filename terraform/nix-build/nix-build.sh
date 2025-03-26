@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -efu
+set -xefu
 
 declare file attribute nix_options special_args
 eval "$(jq -r '@sh "attribute=\(.attribute) file=\(.file) nix_options=\(.nix_options) special_args=\(.special_args)"')"
