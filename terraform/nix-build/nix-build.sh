@@ -19,9 +19,18 @@ if [[ ${special_args-} == "{}" ]]; then
   fi
 else
   if [[ ${file-} != 'null' ]]; then
-    base_config="(import ${file})"
     # e.g. config_attribute=config.system.build.toplevel
     config_attribute="${attribute}"
+    # inject `special_args` into nixos config's `specialArgs`
+    base_config="(import ${file})"
+    nix_expr="${base_config}.extendModules { specialArgs = builtins.fromJSON ''${special_args}''; }"
+    # use temp file over error 'access to absolute path ... is forbidden in pure eval mode'
+    tmp_dir=$(mktemp -d "${TMPDIR:-/tmp/}$(basename "$0").XXXXXXXXXXXX")
+    mkdir -p "${tmp_dir}"
+    tmp_file="${tmp_dir}/wrapper.nix"
+    echo "${nix_expr}" > "${tmp_file}"
+    # shellcheck disable=SC2086
+    out=$(nix build --no-link --json ${options} --file "${tmp_file}" "${config_attribute}")
   else
     # pass the args in a pure fashion by extending the original config
     rest="$(echo "${attribute}" | cut -d "#" -f 2)"
@@ -62,11 +71,10 @@ else
     done
     # substitute variables into the template
     base_config="(builtins.getFlake ''file://${flake_dir}?dir=${target_segment//\/flake.nix/}&narHash=${flake_nar}'').${config_path}"
+    # inject `special_args` into nixos config's `specialArgs`
+    nix_expr="${base_config}.extendModules { specialArgs = builtins.fromJSON ''${special_args}''; }"
+    # shellcheck disable=SC2086
+    out=$(nix build --no-link --json ${options} --expr "${nix_expr}" "${config_attribute}")
   fi
-  # inject `special_args` into nixos config's `specialArgs`
-  nix_expr="${base_config}.extendModules { specialArgs = builtins.fromJSON ''${special_args}''; }"
-  # FIXME: how can I avoid impure?
-  # shellcheck disable=SC2086
-  out=$(nix build --impure --no-link --json ${options} --expr "${nix_expr}" "${config_attribute}")
 fi
 printf '%s' "$out" | jq -c '.[].outputs'
