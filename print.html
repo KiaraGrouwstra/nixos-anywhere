@@ -1,0 +1,928 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>nixos-anywhere - install NixOS everywhere</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">nixos-anywhere - install NixOS everywhere</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="system-requirements-nixos-anywhere"><a class="header" href="#system-requirements-nixos-anywhere">System Requirements: nixos-anywhere</a></h1>
+<p><strong><em>Install NixOS everywhere via ssh</em></strong></p>
+<img src="https://raw.githubusercontent.com/nix-community/nixos-anywhere/main/docs/logo.png" width="150" height="150">
+<p><a href="./INDEX.html">Documentation Index</a></p>
+<h2 id="requirements"><a class="header" href="#requirements">Requirements</a></h2>
+<h3 id="source-machine"><a class="header" href="#source-machine">Source Machine</a></h3>
+<ol>
+<li>
+<p><strong>Supported Systems:</strong></p>
+<ul>
+<li>Linux or macOS computers with Nix installed.</li>
+<li>NixOS</li>
+<li>Windows systems using WSL2.</li>
+</ul>
+</li>
+<li>
+<p><strong>Nix Installation:</strong> If Nix is not yet installed on your system, refer to
+the <a href="https://nixos.org/download#download-nix">nix installation page</a>.</p>
+</li>
+</ol>
+<h3 id="destination-machine"><a class="header" href="#destination-machine">Destination Machine</a></h3>
+<p>The machine must be reachable over the public internet or local network.
+Nixos-anywhere does not support wifi networks. If a VPN is needed, define a
+custom installer via the --kexec flag which connects to your VPN.</p>
+<ol>
+<li>
+<p><strong>Direct Boot Option:</strong></p>
+<ul>
+<li>Must be already running a NixOS installer.</li>
+</ul>
+</li>
+<li>
+<p><strong>Alternative Boot Options:</strong> If not booting directly from a NixOS installer
+image:</p>
+<ul>
+<li><strong>Architecture &amp; Support:</strong> Must be operating on:
+<ul>
+<li>x86-64 or aarch64 Linux systems with kexec support. Note: While most
+x86-64 Linux systems support kexec, if you're using an architecture other
+than those mentioned, you may need to specify a
+<a href="./howtos/INDEX.html#using-your-own-kexec-image">different kexec image</a>
+manually.</li>
+</ul>
+</li>
+<li><strong>Memory Requirements:</strong>
+<ul>
+<li>At least 1 GB of RAM (excluding swap space).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="quickstart-guide-nixos-anywhere"><a class="header" href="#quickstart-guide-nixos-anywhere">Quickstart Guide: nixos-anywhere</a></h1>
+<p><strong><em>Install NixOS everywhere via ssh</em></strong></p>
+<img src="https://raw.githubusercontent.com/nix-community/nixos-anywhere/main/docs/logo.png" width="150" height="150">
+<p><a href="./INDEX.html">Documentation Index</a></p>
+<h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
+<p>This guide documents a simple installation of NixOS using <strong>nixos-anywhere</strong> on
+a target machine running x86_64 Linux with
+<a href="https://man7.org/linux/man-pages/man8/kexec.8.html">kexec</a> support. The example
+used in this guide installs NixOS on a Hetzner cloud machine. The configuration
+may be different for some other instances. We will be including further examples
+in the <a href="./howtos/INDEX.html">How To Guide</a> as and when they are available.</p>
+<p>You will need:</p>
+<ul>
+<li>A <a href="https://wiki.nixos.org/wiki/Flakes">flake</a> that controls the actions to be
+performed</li>
+<li>A disk configuration containing details of the file system that will be
+created on the new server.</li>
+<li>A target machine that is reachable via SSH, either using keys or a password,
+and the privilege to either log in directly as root or a user with
+password-less sudo.</li>
+</ul>
+<p><strong>nixos-anywhere</strong> doesn’t need to be installed. You can run it directly from
+<a href="https://github.com/nix-community/nixos-anywhere">the Github repository.</a></p>
+<p>Details of the flake, the disk configuration and the CLI command are discussed
+below.</p>
+<h2 id="steps-required-to-run-nixos-anywhere"><a class="header" href="#steps-required-to-run-nixos-anywhere">Steps required to run nixos-anywhere</a></h2>
+<h3 id="1-enable-flakes"><a class="header" href="#1-enable-flakes">1. Enable Flakes</a></h3>
+<p>Check if your nix has flakes enabled by running <code>nix flake</code>. It will tell you if
+it's not. To enable flakes, refer to the
+<a href="https://wiki.nixos.org/wiki/Flakes#enable-flakes">NixOS Wiki</a>.</p>
+<h3 id="2-initialize-a-flake"><a class="header" href="#2-initialize-a-flake">2. Initialize a Flake</a></h3>
+<p>The easiest way to start is to copy our
+<a href="https://github.com/nix-community/nixos-anywhere-examples/blob/main/flake.nix">example flake.nix</a>
+into a new directory. This example is tailored for a virtual machine setup
+similar to one on <a href="https://www.hetzner.com/cloud">Hetzner Cloud</a>, so you might
+need to adapt it for your setup.</p>
+<p>If you already have a flake, you can use it by adding
+<a href="https://github.com/nix-community/disko?tab=readme-ov-file#how-to-use-disko">disko configuration</a>
+to it.</p>
+<h3 id="3-configure-your-ssh-key"><a class="header" href="#3-configure-your-ssh-key">3. Configure your SSH key</a></h3>
+<p>If you cloned
+<a href="https://github.com/nix-community/nixos-anywhere-examples/blob/main/configuration.nix">our nixos-anywhere-example</a>
+you will also replace the SSH key like this: In your configuration, locate the
+line that reads:</p>
+<pre><code class="language-bash"># change this to your ssh key
+            "CHANGE"
+</code></pre>
+<p>Replace the text <code>CHANGE</code> with your own SSH key. This is crucial, as you will
+not be able to log into the target machine post-installation without it. If you
+have a .pem file you can run</p>
+<pre><code class="language-bash">ssh-keygen -y -f /path/to/your/key.pem
+</code></pre>
+<p>then paste the result in between the quotes like "ssh-rsa AAA..."</p>
+<h3 id="4-configure-storage"><a class="header" href="#4-configure-storage">4. Configure Storage</a></h3>
+<p>In the same directory, create a file called <code>disk-config.nix</code>. This file will
+define the disk layout for the
+<a href="https://github.com/nix-community/disko/blob/master/docs/INDEX.md">disko</a> tool,
+which is used by nixos-anywhere to partition, format, and mount the disks.</p>
+<p>For a basic installation, you can copy the contents from the example provided
+<a href="https://github.com/nix-community/nixos-anywhere-examples/blob/main/disk-config.nix">here</a>.
+This configuration sets up a standard GPT (GUID Partition Table) that is
+compatible with both EFI and BIOS systems and mounts the disk as <code>/dev/sda</code>. You
+may need to adjust <code>/dev/sda</code> to match the correct disk on your machine. To
+identify the disk, run the <code>lsblk</code> command and replace <code>sda</code> with the actual
+disk name.</p>
+<p>For example, on this machine, we would select <code>/dev/nvme0n1</code> as the disk:</p>
+<pre><code>NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+nvme0n1     259:0    0  1.8T  0 disk
+</code></pre>
+<p>If this setup does not match your requirements, you can choose an example that
+better suits your disk layout from the
+<a href="https://github.com/nix-community/disko/tree/master/example">disko examples</a>.
+For more detailed information, refer to the
+<a href="https://github.com/nix-community/disko">disko documentation</a>.</p>
+<h3 id="5-lock-your-flake"><a class="header" href="#5-lock-your-flake">5. Lock your Flake</a></h3>
+<pre><code>nix flake lock
+</code></pre>
+<p>This will download your flake dependencies and make a <code>flake.lock</code> file that
+describes how to reproducibly build your system.</p>
+<p>Optionally, you can commit these files to a repo such as Github, or you can
+simply reference your local directory when you run <strong>nixos-anywhere</strong>. This
+example uses a local directory on the source machine.</p>
+<h3 id="6-connectivity-to-the-target-machine"><a class="header" href="#6-connectivity-to-the-target-machine">6. Connectivity to the Target Machine</a></h3>
+<p><strong>nixos-anywhere</strong> will create a temporary SSH key to use for the installation.
+If your SSH key is not found, you will be asked for your password. If you are
+using a non-root user, you must have access to sudo without a password. To avoid
+SSH password prompts, set the <code>SSHPASS</code> environment variable to your password
+and add <code>--env-password</code> to the <code>nixos-anywhere</code> command. If providing a
+specific SSH key through <code>-i</code> (identity_file), this key will then be used for
+the installation and no temporary SSH key will be created.</p>
+<h3 id="7-optional-test-your-nixos-and-disko-configuration"><a class="header" href="#7-optional-test-your-nixos-and-disko-configuration">7. (Optional) Test your NixOS and Disko configuration</a></h3>
+<p>Skip this step and continue with Step 8, if you don't have a hardware
+configuration (hardware-configuration.nix or facter.json) generated yet or make
+sure you don't import non-existing hardware-configuration.nix or facter.json
+during running the vm test.</p>
+<p>The following command will automatically test your nixos configuration and run
+disko inside a virtual machine, where</p>
+<ul>
+<li>
+<p><code>&lt;path to configuration&gt;</code> is the path to the directory or repository
+containing <code>flake.nix</code> and <code>disk-config.nix</code></p>
+</li>
+<li>
+<p><code>&lt;configuration name&gt;</code> must match the name that immediately follows the text
+<code>nixosConfigurations.</code> in the flake, as indicated by the comment in the
+<a href="https://github.com/nix-community/nixos-anywhere-examples/blob/main/flake.nix">example</a>.</p>
+</li>
+</ul>
+<pre><code>nix run github:nix-community/nixos-anywhere -- --flake &lt;path to configuration&gt;#&lt;configuration name&gt; --vm-test
+</code></pre>
+<h3 id="8-prepare-hardware-configuration"><a class="header" href="#8-prepare-hardware-configuration">8. Prepare Hardware Configuration</a></h3>
+<p>If you're not using a virtual machine, it's recommended to allow
+<code>nixos-anywhere</code> to generate a hardware configuration during installation. This
+ensures that essential drivers, such as those required for disk detection, are
+properly configured.</p>
+<p>To enable <code>nixos-anywhere</code> to integrate its generated configuration into your
+NixOS setup, you need to include an import for the hardware configuration
+beforehand.</p>
+<p>Here’s an example:</p>
+<pre><code class="language-diff"> nixosConfigurations.generic = nixpkgs.lib.nixosSystem {
+   system = "x86_64-linux";
+   modules = [
+     disko.nixosModules.disko
+     ./configuration.nix
++    ./hardware-configuration.nix
+   ];
+ };
+</code></pre>
+<p>When running <code>nixos-anywhere</code>, this file is automatically generated by including
+the following flags in your command:
+<code>--generate-hardware-config nixos-generate-config ./hardware-configuration.nix</code>.
+The second flag, <code>./hardware-configuration.nix</code>, specifies where
+<code>nixos-generate-config</code> will store the configuration. Adjust this path to
+reflect the location where you want the <code>hardware-configuration.nix</code> for this
+machine to be saved.</p>
+<h4 id="81-nixos-facter"><a class="header" href="#81-nixos-facter">8.1 nixos-facter</a></h4>
+<p>As an alternative to <code>nixos-generate-config</code>, you can use the experimental
+<a href="https://github.com/numtide/nixos-facter">nixos-facter</a> command, which offers
+more comprehensive hardware reports and advanced configuration options.</p>
+<p>To use <code>nixos-facter</code>, add the following to your flake inputs:</p>
+<pre><code class="language-diff"> {
++ inputs.nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
+ }
+</code></pre>
+<p>Next, import the module into your configuration and specify <code>facter.json</code> as the
+path where the hardware report will be saved:</p>
+<pre><code class="language-diff"> nixosConfigurations.generic-nixos-facter = nixpkgs.lib.nixosSystem {
+   system = "x86_64-linux";
+   modules = [
+     disko.nixosModules.disko
+     ./configuration.nix
++    nixos-facter-modules.nixosModules.facter
++    { config.facter.reportPath = ./facter.json }
+   ];
+ };
+</code></pre>
+<p>To generate the configuration for <code>nixos-facter</code> with <code>nixos-anywhere</code>, use the
+following flags: <code>--generate-hardware-config nixos-facter ./facter.json</code>. The
+second flag, <code>./facter.json</code>, specifies where <code>nixos-generate-config</code> will store
+the hardware report. Adjust this path to suit the location where you want the
+<code>facter.json</code> to be saved.</p>
+<h3 id="9-run-it"><a class="header" href="#9-run-it">9. Run it</a></h3>
+<p>You can now run <strong>nixos-anywhere</strong> from the command line as shown below, where:</p>
+<ul>
+<li>
+<p><code>&lt;path to configuration&gt;</code> is the path to the directory or repository
+containing <code>flake.nix</code> and <code>disk-config.nix</code></p>
+</li>
+<li>
+<p><code>&lt;configuration name&gt;</code> must match the name that immediately follows the text
+<code>nixosConfigurations.</code> in the flake, as indicated by the comment in the
+<a href="https://github.com/nix-community/nixos-anywhere-examples/blob/main/flake.nix">example</a>.</p>
+</li>
+<li>
+<p><code>&lt;ip address&gt;</code> is the IP address of the target machine.</p>
+</li>
+</ul>
+<pre><code>nix run github:nix-community/nixos-anywhere -- --flake &lt;path to configuration&gt;#&lt;configuration name&gt; --target-host root@&lt;ip address&gt;
+</code></pre>
+<p>The command would look  like this if you had created your files in a directory
+named <code>/home/mydir/test</code> and the IP address of your target machine is
+<code>37.27.18.135</code>:</p>
+<pre><code>nix run github:nix-community/nixos-anywhere -- --flake /home/mydir/test#hetzner-cloud --target-host root@37.27.18.135
+</code></pre>
+<p>If you also need to generate hardware configuration amend flags for
+nixos-generate-config:</p>
+<pre><code>nix run github:nix-community/nixos-anywhere -- --generate-hardware-config nixos-generate-config ./hardware-configuration.nix --flake &lt;path to configuration&gt;#&lt;configuration name&gt; --target-host root@&lt;ip address&gt;
+</code></pre>
+<p>Or these flags if you are using nixos-facter instead:</p>
+<pre><code>nix run github:nix-community/nixos-anywhere -- --generate-hardware-config nixos-facter ./facter.json  --flake &lt;path to configuration&gt;#&lt;configuration name&gt; --target-host root@&lt;ip address&gt;
+</code></pre>
+<p>Adjust the location of <code>./hardware-configuration.nix</code> and <code>./facter.json</code>
+accordingly.</p>
+<p><strong>nixos-anywhere</strong> will then run, showing various output messages at each stage.
+It may take some time to complete, depending on Internet speeds. It should
+finish by showing the messages below before returning to the command prompt.</p>
+<pre><code>Installation finished. No error reported.
+Warning: Permanently added '&lt;ip-address&gt;' (ED25519) to the list of known hosts
+</code></pre>
+<p>When this happens, the target server will have been overwritten with a new
+installation of NixOS. Note that the server's public SSH key will have changed.</p>
+<p>If you have previously accessed this server using SSH, you may see the following
+message the next time you try to log in to the target.</p>
+<pre><code>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ED25519 key sent by the remote host is
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.
+Please contact your system administrator.
+Add correct host key in ~/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in ~/.ssh/known_hosts:6
+  remove with:
+  ssh-keygen -f ~/.ssh/known_hosts" -R "&lt;ip address&gt;"
+Host key for &lt;ip_address&gt; has changed and you have requested strict checking.
+Host key verification failed.
+</code></pre>
+<p>This is because the <code>known_hosts</code> file in the <code>.ssh</code> directory now contains a
+mismatch, since the server has been overwritten. To solve this, use a text
+editor to remove the old entry from the <code>known_hosts</code> file (or use the command
+<code>ssh-keygen -R &lt;ip_address&gt;</code>). The next connection attempt will then treat this
+as a new server.</p>
+<p>The error message line <code>Offending ECDSA key in ~/.ssh/known_hosts:6</code> gives the
+line number that needs to be removed from the <code>known_hosts</code> file (line 6 in this
+example).</p>
+<h1 id="finished"><a class="header" href="#finished">Finished!</a></h1>
+<p><strong>nixos-anywhere</strong>'s job is now done, as it is a tool to install NixOS onto the
+target machine.</p>
+<p>Any future changes to the configuration should be made to your flake. You would
+reference this flake when using the NixOS <code>nixos-rebuild</code> command or a separate
+3rd party deployment tool of your choice i.e.
+<a href="https://github.com/serokell/deploy-rs">deploy-rs</a>,
+<a href="https://github.com/zhaofengli/colmena">colmena</a>,
+<a href="https://github.com/MatthewCroughan/nixinate">nixinate</a>,
+<a href="https://clan.lol/">clan</a> (author's choice).</p>
+<p>To update on the machine locally (replace <code>&lt;URL to your flake&gt;</code> with your flake
+i.e. <code>.#</code> if your flake is in the current directory):</p>
+<pre><code>nixos-rebuild switch --flake &lt;URL to your flake&gt;
+</code></pre>
+<p>To update remotely you will need to have configured an
+<a href="https://search.nixos.org/options?show=services.sshd.enable">ssh server</a> and
+your ssh key for the
+<a href="https://search.nixos.org/options?show=users.users.%3Cname%3E.openssh.authorizedKeys.keys">root user</a>:</p>
+<pre><code>nixos-rebuild switch --flake &lt;URL to your flake&gt; --target-host "root@&lt;ip address&gt;"
+</code></pre>
+<p>See the Nix documentation for use of the flake
+<a href="https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake#url-like-syntax">URL-like syntax</a>.</p>
+<p>For more information on different use cases of <strong>nixos-anywhere</strong> please refer
+to the <a href="./howtos/INDEX.html">How to Guide</a>, and for more technical information and
+explanation of known error messages, refer to the
+<a href="./reference.html">Reference Manual</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="how-to-guide-nixos-anywhere"><a class="header" href="#how-to-guide-nixos-anywhere">How To Guide: nixos-anywhere</a></h1>
+<p><strong><em>Install NixOS everywhere via ssh</em></strong></p>
+<img title="" src="https://raw.githubusercontent.com/nix-community/nixos-anywhere/main/docs/logo.png" alt="" width="129">
+<p><a href="howtos/./INDEX.html">Documentation Index</a></p>
+<h2 id="contents"><a class="header" href="#contents">Contents</a></h2>
+<p><a href="howtos/./no-os.html">Installing on a machine with no operating system</a></p>
+<p><a href="howtos/./limited-ram.html">Kexec on systems with limited RAM</a></p>
+<p><a href="howtos/./extra-files.html">Copying files to the new installation</a></p>
+<p><a href="howtos/./custom-kexec.html">Using your own kexec image</a></p>
+<p><a href="howtos/./disko-modes.html">Repair installations without wiping data</a></p>
+<p><a href="howtos/./secrets.html">Secrets and full disk encryption</a></p>
+<p><a href="howtos/./use-without-flakes.html">Use without flakes</a></p>
+<p><a href="howtos/./terraform.html">Terraform</a></p>
+<p><a href="howtos/./nix-path.html">Nix-channels / <code>NIX_PATH</code></a></p>
+<p><a href="howtos/./ipv6.html">IPv6-only targets</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="installing-on-a-machine-with-no-operating-system"><a class="header" href="#installing-on-a-machine-with-no-operating-system">Installing on a machine with no operating system</a></h1>
+<p>If your machine doesn't currently have an operating system installed, you can
+still run <code>nixos-anywhere</code> remotely to automate the install. To do this, you
+would first need to boot the target machine from the standard NixOS installer.
+You can either boot from a USB or use <code>netboot</code>.</p>
+<p>The
+<a href="https://nixos.org/manual/nixos/stable/index.html#sec-booting-from-usb">NixOS installation guide</a>
+has detailed instructions on how to boot the installer.</p>
+<p>When you run <code>nixos-anywhere</code>, it will determine whether a NixOS installer is
+present by checking whether the <code>/etc/os-release</code> file contains the identifier
+<code>VARIANT_ID=installer</code>. This identifier is available on releases NixOS 23.05 or
+later.</p>
+<p>If an installer is detected, <code>nixos-anywhere</code> will not attempt to <code>kexec</code> into
+its own image. This is particularly useful for targets that don't have enough
+RAM for <code>kexec</code> or don't support <code>kexec</code>.</p>
+<p>NixOS starts an SSH server on the installer by default, but you need to set a
+password in order to access it. To set a password for the <code>nixos</code> user, run the
+following command in a terminal on the NixOS machine:</p>
+<pre><code>passwd
+</code></pre>
+<p>If you don't know the IP address of the installer on your network, you can find
+it by running the following command:</p>
+<pre><code>$ ip addr
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 52:54:00:12:34:56 brd ff:ff:ff:ff:ff:ff
+    altname enp0s3
+    altname ens3
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic noprefixroute eth0
+       valid_lft 86385sec preferred_lft 75585sec
+    inet6 fec0::5054:ff:fe12:3456/64 scope site dynamic mngtmpaddr noprefixroute
+       valid_lft 86385sec preferred_lft 14385sec
+    inet6 fe80::5054:ff:fe12:3456/64 scope link
+       valid_lft forever preferred_lft forever
+</code></pre>
+<p>This will display the IP addresses assigned to your network interface(s),
+including the IP address of the installer. In the example output below, the
+installer's IP addresses are <code>10.0.2.15</code>, <code>fec0::5054:ff:fe12:3456</code>, and
+<code>fe80::5054:ff:fe12:3456%eth0</code>:</p>
+<p>To test if you can connect and your password works, you can use the following
+SSH command (replace the IP address with your own):</p>
+<pre><code>ssh -v nixos@fec0::5054:ff:fe12:3456
+</code></pre>
+<p>You can then use the IP address to run <code>nixos-anywhere</code> like this:</p>
+<pre><code>nix run github:nix-community/nixos-anywhere -- --flake '.#myconfig' --target-host nixos@fec0::5054:ff:fe12:3456
+</code></pre>
+<p>This example assumes a flake in the current directory containing a configuration
+named <code>myconfig</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="using-your-own-kexec-image"><a class="header" href="#using-your-own-kexec-image">Using your own kexec image</a></h1>
+<p>By default, <code>nixos-anywhere</code> downloads the kexec image from the
+<a href="https://github.com/nix-community/nixos-images#kexec-tarballs">NixOS images repository</a>.</p>
+<p>However, you can provide your own <code>kexec</code> image file if you need to use a
+different one. This is particularly useful for architectures other than <code>x86_64</code>
+and <code>aarch64</code>, since they don't have a pre-build image.</p>
+<p>To do this, use the <code>--kexec</code> command line switch followed by the path to your
+image file. The image will be uploaded prior to execution.</p>
+<p>Here's an example command that demonstrates how to use a custom kexec image with
+<code>nixos-anywhere</code>:</p>
+<pre><code>nix run github:nix-community/nixos-anywhere -- \
+  --kexec "$(nix build --print-out-paths github:nix-community/nixos-images#packages.aarch64-linux.kexec-installer-nixos-unstable-noninteractive)/nixos-kexec-installer-noninteractive-aarch64-linux.tar.gz" \
+  --flake 'github:your-user/your-repo#your-system' \
+  root@yourip
+</code></pre>
+<p>Make sure to replace <code>github:your-user/your-repo#your-system</code> with the
+appropriate Flake URL representing your NixOS configuration.</p>
+<p>The example above assumes that your local machine can build for aarch64 in one
+of the following ways:</p>
+<ul>
+<li>
+<p>Natively</p>
+</li>
+<li>
+<p>Through a remote builder</p>
+</li>
+<li>
+<p>By emulating the architecture with qemu using the following NixOS
+configuration:</p>
+</li>
+</ul>
+<pre><code class="language-nix">{
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="secrets-and-full-disk-encryption"><a class="header" href="#secrets-and-full-disk-encryption">Secrets and full disk encryption</a></h1>
+<p>The <code>nixos-anywhere</code> utility offers the capability to install secrets onto a
+target machine. This feature is particularly beneficial when you want to
+bootstrap secrets management tools such as
+<a href="https://github.com/Mic92/sops-nix">sops-nix</a> or
+<a href="https://github.com/ryantm/agenix">agenix</a>, which rely on machine-specific
+secrets to decrypt other uploaded secrets.</p>
+<h2 id="example-decrypting-an-openssh-host-key-with-pass"><a class="header" href="#example-decrypting-an-openssh-host-key-with-pass">Example: Decrypting an OpenSSH Host Key with pass</a></h2>
+<p>In this example, we demonstrate how to use a script to decrypt an OpenSSH host
+key from the <code>pass</code> password manager and subsequently pass it to
+<code>nixos-anywhere</code> during the installation process:</p>
+<pre><code class="language-bash">#!/usr/bin/env bash
+
+# Create a temporary directory
+temp=$(mktemp -d)
+
+# Function to cleanup temporary directory on exit
+cleanup() {
+  rm -rf "$temp"
+}
+trap cleanup EXIT
+
+# Create the directory where sshd expects to find the host keys
+install -d -m755 "$temp/etc/ssh"
+
+# Decrypt your private key from the password store and copy it to the temporary directory
+pass ssh_host_ed25519_key &gt; "$temp/etc/ssh/ssh_host_ed25519_key"
+
+# Set the correct permissions so sshd will accept the key
+chmod 600 "$temp/etc/ssh/ssh_host_ed25519_key"
+
+# Install NixOS to the host system with our secrets
+nixos-anywhere --extra-files "$temp" --flake '.#your-host' --target-host root@yourip
+</code></pre>
+<h2 id="example-uploading-disk-encryption-secrets"><a class="header" href="#example-uploading-disk-encryption-secrets">Example: Uploading Disk Encryption Secrets</a></h2>
+<p>In a similar vein, <code>nixos-anywhere</code> can upload disk encryption secrets, which
+are necessary during formatting with disko. Here's an example that demonstrates
+how to provide your disk encryption password as a file or via the <code>pass</code> utility
+to <code>nixos-anywhere</code>:</p>
+<pre><code class="language-bash"># Write your disk encryption password to a file
+echo "my-super-safe-password" &gt; /tmp/disk-1.key
+
+# Call nixos-anywhere with disk encryption keys
+nixos-anywhere \
+  --disk-encryption-keys /tmp/disk-1.key /tmp/disk-1.key \
+  --disk-encryption-keys /tmp/disk-2.key &lt;(pass my-disk-encryption-password) \
+  --flake '.#your-host' \
+  root@yourip
+</code></pre>
+<p>In the above example, replace <code>"my-super-safe-password"</code> with your actual
+encryption password, and <code>my-disk-encryption-password</code> with the relevant entry
+in your pass password store. Also, ensure to replace <code>'.#your-host'</code> and
+<code>root@yourip</code> with your actual flake and IP address, respectively.</p>
+<h2 id="example-using-existing-ssh-host-keys"><a class="header" href="#example-using-existing-ssh-host-keys">Example: Using existing SSH host keys</a></h2>
+<p>If the system contains existing trusted <code>/etc/ssh/ssh_host_*</code> SSH host keys and
+certificates, <code>nixos-anywhere</code> can copy them in case they are necessary during
+installation and system activation.</p>
+<pre><code>nixos-anywhere --copy-host-keys --flake '.#your-host' root@yourip
+</code></pre>
+<p>This would copy <code>/etc/ssh/ssh_host_*</code> to <code>/mnt</code> after kexec but before
+installation, ignoring files that already exist in destination.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="use-without-flakes"><a class="header" href="#use-without-flakes">Use without flakes</a></h1>
+<p>First,
+<a href="https://github.com/nix-community/disko/blob/master/docs/HowTo.md#installing-nixos-module">import the disko NixOS module</a>
+in your NixOS configuration and define disko devices as described in the
+<a href="https://github.com/nix-community/disko/tree/master/example">examples</a>.</p>
+<p>Let's assume that your NixOS configuration lives in <code>configuration.nix</code> and your
+target machine is called <code>machine</code>:</p>
+<h2 id="1-download-your-favourite-disk-layout"><a class="header" href="#1-download-your-favourite-disk-layout">1. Download your favourite disk layout:</a></h2>
+<p>See https://github.com/nix-community/disko-templates/ for more examples:</p>
+<p>The example below will work with both UEFI and BIOS-based systems.</p>
+<pre><code class="language-bash">curl https://raw.githubusercontent.com/nix-community/disko-templates/main/single-disk-ext4/disko-config.nix &gt; ./disko-config.nix
+</code></pre>
+<h2 id="2-get-a-hardware-configurationnix-from-on-the-target-machine"><a class="header" href="#2-get-a-hardware-configurationnix-from-on-the-target-machine">2. Get a hardware-configuration.nix from on the target machine</a></h2>
+<ul>
+<li>
+<p><strong>Option 1</strong>: If NixOS is not installed, boot into an installer without first
+installing NixOS.</p>
+</li>
+<li>
+<p><strong>Option 2</strong>: Use the kexec tarball method, as described
+<a href="https://github.com/nix-community/nixos-images#kexec-tarballs">here</a>.</p>
+</li>
+<li>
+<p><strong>Generate Configuration</strong>: Run the following command on the target machine:</p>
+<pre><code class="language-bash">nixos-generate-config --no-filesystems --dir /tmp/config
+</code></pre>
+</li>
+</ul>
+<p>This creates the necessary configuration files under <code>/tmp/config/</code>. Copy
+<code>/tmp/config/nixos/hardware-configuration.nix</code> to your local machine into the
+same directory as <code>disko-config.nix</code>.</p>
+<h2 id="3-set-nixos-version-to-use"><a class="header" href="#3-set-nixos-version-to-use">3. Set NixOS version to use</a></h2>
+<pre><code class="language-nix"># default.nix
+let
+  # replace nixos-24.11 with your preferred nixos version or revision from here: https://status.nixos.org/
+  nixpkgs = fetchTarball "https://github.com/NixOS/nixpkgs/archive/refs/heads/nixos-24.11.tar.gz";
+in
+import (nixpkgs + "/nixos/lib/eval-config.nix") {
+  modules = [ ./configuration.nix ];
+}
+</code></pre>
+<h2 id="4-write-a-nixos-configuration"><a class="header" href="#4-write-a-nixos-configuration">4. Write a NixOS configuration</a></h2>
+<pre><code class="language-nix"># configuration.nix
+{
+  imports = [
+   "${fetchTarball "https://github.com/nix-community/disko/tarball/master"}/module.nix"
+    ./disko-config.nix
+    ./hardware-configuration.nix
+  ];
+  # Replace this with the system of the installation target you want to install!!!
+  disko.devices.disk.main.device = "/dev/sda";
+
+  # Set this to the NixOS version that you have set in the previous step.
+  # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
+  system.stateVersion = "24.11";
+}
+</code></pre>
+<h2 id="5-build-and-deploy-with-nixos-anywhere"><a class="header" href="#5-build-and-deploy-with-nixos-anywhere">5. Build and deploy with nixos-anywhere</a></h2>
+<p>Your current directory now should contain the following files from the previous
+step:</p>
+<ul>
+<li><code>configuration.nix</code>, <code>default.nix</code>, <code>disko-config.nix</code> and
+<code>hardware-configuration.nix</code></li>
+</ul>
+<p>Run <code>nixos-anywhere</code> as follows:</p>
+<pre><code class="language-bash">nixos-anywhere --store-paths $(nix-build -A config.system.build.formatScript -A config.system.build.toplevel --no-out-link) root@machine
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="terraform"><a class="header" href="#terraform">Terraform</a></h1>
+<p>The nixos-anywhere terraform modules allow you to use Terraform for installing
+and updating NixOS. It simplifies the deployment process by integrating
+nixos-anywhere functionality.</p>
+<p>Our terraform module requires the
+<a href="https://registry.terraform.io/providers/hashicorp/null/latest">null</a> and
+<a href="https://registry.terraform.io/providers/hashicorp/external/latest">external</a>
+provider.</p>
+<p>You can get these by from nixpkgs like this:</p>
+<pre><code class="language-nix">nix-shell -p '(pkgs.terraform.withPlugins (p: [ p.null p.external ]))'
+</code></pre>
+<p>You can add this expression the <code>packages</code> list in your devshell in flake.nix or
+in shell.nix.</p>
+<p>Checkout out the
+<a href="https://github.com/nix-community/nixos-anywhere/tree/main/terraform">module reference</a>
+for examples and module parameter on how to use the modules.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="nix-channels--nix_path"><a class="header" href="#nix-channels--nix_path">Nix-channels / <code>NIX_PATH</code></a></h1>
+<p>nixos-anywhere does not install channels onto the new system by default to save
+time and disk space. This for example results in errors like:</p>
+<pre><code>(stack trace truncated; use '--show-trace' to show the full trace)
+
+error: file 'nixpkgs' was not found in the Nix search path (add it using $NIX_PATH or -I)
+
+at «none»:0: (source not available)
+</code></pre>
+<p>when using tools like nix-shell/nix-env that rely on <code>NIX_PATH</code> being set.</p>
+<h1 id="solution-1-set-the-nix_path-via-nixos-configuration-recommended"><a class="header" href="#solution-1-set-the-nix_path-via-nixos-configuration-recommended">Solution 1: Set the <code>NIX_PATH</code> via nixos configuration (recommended)</a></h1>
+<p>Instead of stateful channels, one can also populate the <code>NIX_PATH</code> using nixos
+configuration instead:</p>
+<pre><code class="language-nix">{
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  # ... other inputs
+
+  outputs = inputs@{ nixpkgs, ... }:
+    {
+      nixosConfigurations.yoursystem = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux"; # adapt to your actual system
+        modules = [
+          # This line will populate NIX_PATH
+          { nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ]; }
+          # ... other modules and your configuration.nix
+        ];
+      };
+    };
+}
+</code></pre>
+<p>Advantage: This solution will be automatically kept up-to-date every time the
+flake is updated.</p>
+<p>In your shell you will see something in your <code>$NIX_PATH</code>:</p>
+<pre><code class="language-shellSession">$ echo $NIX_PATH
+/root/.nix-defexpr/channels:nixpkgs=/nix/store/8b61j28rpy11dg8hanbs2x710d8w3v0d-source
+</code></pre>
+<h1 id="solution-2-manually-add-the-channel"><a class="header" href="#solution-2-manually-add-the-channel">Solution 2: Manually add the channel</a></h1>
+<p>On the installed machine, run:</p>
+<pre><code class="language-shellSession">$ nix-channel --add https://nixos.org/channels/nixos-unstable nixos
+$ nix-channel --update
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="nixos-anywhere-on-ipv6-only-targets"><a class="header" href="#nixos-anywhere-on-ipv6-only-targets">NixOS-anywhere on IPv6-only targets</a></h1>
+<p>As GitHub engineers still haven't enabled the IPv6 switch, the kexec image
+hosted on GitHub, cannot be used unfortunately on IPv6-only hosts. However it is
+possible to use an IPv6 proxy for GitHub content like that:</p>
+<pre><code>nixos-anywhere \
+  --kexec https://gh-v6.com/nix-community/nixos-images/releases/download/nixos-unstable/nixos-kexec-installer-noninteractive-x86_64-linux.tar.gz \
+...
+</code></pre>
+<p>This proxy is hosted by <a href="https://numtide.com/">numtide</a>. It also works for IPv4.</p>
+<p>Alternatively it is also possible to reference a local file:</p>
+<pre><code>nixos-anywhere \
+  --kexec ./nixos-kexec-installer-noninteractive-x86_64-linux.tar.gz \
+...
+</code></pre>
+<p>This tarball will be then uploaded via sftp to the target.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="reference-manual-nixos-anywhere"><a class="header" href="#reference-manual-nixos-anywhere">Reference Manual: nixos-anywhere</a></h1>
+<p><strong><em>Install NixOS everywhere via ssh</em></strong></p>
+<img title="" src="https://raw.githubusercontent.com/nix-community/nixos-anywhere/main/docs/logo.png" alt="" width="141">
+<p><a href="./INDEX.html">Documentation Index</a></p>
+<p>TODO: Populate this guide properly</p>
+<h2 id="contents-1"><a class="header" href="#contents-1">Contents</a></h2>
+<p><a href="reference.html#command-line-usage">Command Line Usage</a></p>
+<p><a href="reference.html#explanation-of-known-error-messages">Explanation of known error messages</a></p>
+<h2 id="command-line-usage"><a class="header" href="#command-line-usage">Command Line Usage</a></h2>
+<!-- `$ bash ./src/nixos-anywhere.sh --help` -->
+<pre><code>Usage: nixos-anywhere [options] [&lt;ssh-host&gt;]
+
+Options:
+
+* -f, --flake &lt;flake_uri&gt;
+  set the flake to install the system from. i.e.
+  nixos-anywhere --flake .#mymachine
+  Also supports variants:
+  nixos-anywhere --flake .#nixosConfigurations.mymachine.config.virtualisation.vmVariant
+* --target-host &lt;ssh-host&gt;
+  set the SSH target host to deploy onto.
+* -i &lt;identity_file&gt;
+  selects which SSH private key file to use.
+* -p, --ssh-port &lt;ssh_port&gt;
+  set the ssh port to connect with
+* --ssh-option &lt;ssh_option&gt;
+  set an ssh option
+* -L, --print-build-logs
+  print full build logs
+* --env-password
+  set a password used by ssh-copy-id, the password should be set by
+  the environment variable SSHPASS
+* -s, --store-paths &lt;disko-script&gt; &lt;nixos-system&gt;
+  set the store paths to the disko-script and nixos-system directly
+  if this is given, flake is not needed
+* --kexec &lt;path&gt;
+  use another kexec tarball to bootstrap NixOS
+* --kexec-extra-flags
+  extra flags to add into the call to kexec, e.g. "--no-sync"
+* --ssh-store-setting &lt;key&gt; &lt;value&gt;
+  ssh store settings appended to the store URI, e.g. "compress true". &lt;value&gt; needs to be URI encoded.
+* --post-kexec-ssh-port &lt;ssh_port&gt;
+  after kexec is executed, use a custom ssh port to connect. Defaults to 22
+* --copy-host-keys
+  copy over existing /etc/ssh/ssh_host_* host keys to the installation
+* --extra-files &lt;path&gt;
+  contents of local &lt;path&gt; are recursively copied to the root (/) of the new NixOS installation. Existing files are overwritten
+  Copied files will be owned by root unless specified by --chown option. See documentation for details.
+* --chown &lt;path&gt; &lt;ownership&gt;
+  change ownership of &lt;path&gt; recursively. Recommended to use uid:gid as opposed to username:groupname for ownership.
+  Option can be specified more than once.
+* --disk-encryption-keys &lt;remote_path&gt; &lt;local_path&gt;
+  copy the contents of the file or pipe in local_path to remote_path in the installer environment,
+  after kexec but before installation. Can be repeated.
+* --no-substitute-on-destination
+  disable passing --substitute-on-destination to nix-copy
+* --debug
+  enable debug output
+* --show-trace
+  show nix build traces
+* --option &lt;key&gt; &lt;value&gt;
+  nix option to pass to every nix related command
+* --from &lt;store-uri&gt;
+  URL of the source Nix store to copy the nixos and disko closure from
+* --build-on-remote
+  build the closure on the remote machine instead of locally and copy-closuring it
+* --vm-test
+  build the system and test the disk configuration inside a VM without installing it to the target.
+* --generate-hardware-config nixos-facter|nixos-generate-config &lt;path&gt;
+  generate a hardware-configuration.nix file using the specified backend and write it to the specified path.
+  The backend can be either 'nixos-facter' or 'nixos-generate-config'.
+* --phases
+  comma separated list of phases to run. Default is: kexec,disko,install,reboot
+  kexec: kexec into the nixos installer
+  disko: first unmount and destroy all filesystems on the disks we want to format, then run the create and mount mode
+  install: install the system
+  reboot: unmount the filesystems, export any ZFS pools and reboot the machine
+* --disko-mode disko|mount|format
+  set the disko mode to format, mount or destroy. Default is disko.
+  disko: first unmount and destroy all filesystems on the disks we want to format, then run the create and mount mode
+* --no-disko-deps
+  This will only upload the disko script and not the partitioning tools dependencies.
+  Installers usually have dependencies available.
+  Use this option if your target machine has not enough RAM to store the dependencies in memory.
+* --build-on auto|remote|local
+  sets the build on settings to auto, remote or local. Default is auto.
+  auto: tries to figure out, if the build is possible on the local host, if not falls back gracefully to remote build
+  local: will build on the local host
+  remote: will build on the remote host
+</code></pre>
+<h2 id="explanation-of-known-error-messages"><a class="header" href="#explanation-of-known-error-messages">Explanation of known error messages</a></h2>
+<p>TODO: Add additional error messages and meanings. Fill in missing explanations</p>
+<p>This section lists known error messages and their explanations. Some
+explanations may refer to the following CLI syntax:</p>
+<p><code>nix run github:nix-community/nixos-anywhere -- --flake &lt;path to configuration&gt;#&lt;configuration name&gt; root@&lt;ip address&gt;</code></p>
+<p>This list is not comprehensive. It's possible you may encounter errors that
+originate from the underlying operating system. These should be documented in
+the relevant operating system manual.</p>
+<div class="table-wrapper"><table><thead><tr><th>Id</th><th>Message</th><th>Explanation</th></tr></thead><tbody>
+<tr><td>1</td><td>Failure unpacking initrd</td><td>You don't have enough RAM to hold <code>kexec</code></td></tr>
+<tr><td>2</td><td>Flake &lt;flake_url&gt; does not provide attribute</td><td>The configuration name you specified in your flake URI is not defined as a NixOS configuration in your flake eg if your URI was mydir#myconfig, then myconfig should be included in the flake as <code>nixosConfigurations.myconfig</code></td></tr>
+<tr><td>3</td><td>Please specify the name of the NixOS configuration to be installed, as a URI fragment in the flake-uri.</td><td>As for error #2</td></tr>
+<tr><td></td><td>For example, to use the output nixosConfigurations.foo from the flake.nix, append "#foo" to the flake-uri</td><td></td></tr>
+<tr><td>4</td><td>Retrieving host facts via ssh failed. Check with --debug for the root cause, unless you have done so already</td><td>TODO: Explain</td></tr>
+<tr><td>5</td><td>ssh-host must be set</td><td>&lt;ip_address&gt; has not been supplied</td></tr>
+<tr><td>6</td><td>&lt;disko_script&gt; and &lt;nixos_system&gt; must be existing store-paths</td><td>This occurs if the -s switch has been used to specify the disko script and store path correctly, and the scripts cannot be found at the given URI</td></tr>
+<tr><td>7</td><td>flake must be set</td><td>This occurs if both the -flake option (use a flake) and the -s option (specify paths directly) have been omitted. Either one or the other must be specified.</td></tr>
+<tr><td>8</td><td>no tar command found, but required to unpack kexec tarball</td><td>The destination machine does not have a <code>tar</code> command available. This is needed to unpack the <code>kexec</code>.</td></tr>
+<tr><td>9</td><td>no setsid command found, but required to run the kexec script under a new session</td><td>The destination machine does not have the <code>setsid</code> command available</td></tr>
+<tr><td>10</td><td>This script requires Linux as the operating system, but got <operating system></td><td>The destination machine is not running Linux</td></tr>
+<tr><td>11</td><td>The default kexec image only support x86_64 cpus. Checkout https://github.com/nix-community/nixos-anywhere/#using-your-own-kexec-image for more information.</td><td>By default, <code>nixos-anywhere</code> uses its own <code>kexec</code> image, which will only run on x86_64 CPUs. For other CPU types, you can use your own <code>kexec</code> image instead. Refer to the <a href="./howtos#using-your-own-kexec-image">How To Guide</a> for instructions.</td></tr>
+<tr><td>12</td><td>Please specify the name of the NixOS configuration to be installed, as a URI fragment in the flake-uri.</td><td>This is a <code>disko</code> error. As for Error #2</td></tr>
+<tr><td></td><td>For example, to use the output diskoConfigurations.foo from the flake.nix, append "#foo" to the flake-uri.</td><td></td></tr>
+<tr><td>13</td><td>mode must be either create, mount or zap_create_mount</td><td>This is a <code>disko</code> error. The <code>disko</code> switches have not been used correctly. This could happen if you supplied your own <code>disko</code> script using the -s option</td></tr>
+<tr><td>14</td><td>disko config must be an existing file or flake must be set</td><td>This is a <code>disko</code> error. This will happen if the <code>disko.devices</code> entry in your flake doesn't match the name of a file in the same location as your flake.</td></tr>
+<tr><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td></tr>
+</tbody></table>
+</div>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>

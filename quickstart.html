@@ -1,0 +1,459 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Quickstart - nixos-anywhere - install NixOS everywhere</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">nixos-anywhere - install NixOS everywhere</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="quickstart-guide-nixos-anywhere"><a class="header" href="#quickstart-guide-nixos-anywhere">Quickstart Guide: nixos-anywhere</a></h1>
+<p><strong><em>Install NixOS everywhere via ssh</em></strong></p>
+<img src="https://raw.githubusercontent.com/nix-community/nixos-anywhere/main/docs/logo.png" width="150" height="150">
+<p><a href="./INDEX.html">Documentation Index</a></p>
+<h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
+<p>This guide documents a simple installation of NixOS using <strong>nixos-anywhere</strong> on
+a target machine running x86_64 Linux with
+<a href="https://man7.org/linux/man-pages/man8/kexec.8.html">kexec</a> support. The example
+used in this guide installs NixOS on a Hetzner cloud machine. The configuration
+may be different for some other instances. We will be including further examples
+in the <a href="./howtos/INDEX.html">How To Guide</a> as and when they are available.</p>
+<p>You will need:</p>
+<ul>
+<li>A <a href="https://wiki.nixos.org/wiki/Flakes">flake</a> that controls the actions to be
+performed</li>
+<li>A disk configuration containing details of the file system that will be
+created on the new server.</li>
+<li>A target machine that is reachable via SSH, either using keys or a password,
+and the privilege to either log in directly as root or a user with
+password-less sudo.</li>
+</ul>
+<p><strong>nixos-anywhere</strong> doesn’t need to be installed. You can run it directly from
+<a href="https://github.com/nix-community/nixos-anywhere">the Github repository.</a></p>
+<p>Details of the flake, the disk configuration and the CLI command are discussed
+below.</p>
+<h2 id="steps-required-to-run-nixos-anywhere"><a class="header" href="#steps-required-to-run-nixos-anywhere">Steps required to run nixos-anywhere</a></h2>
+<h3 id="1-enable-flakes"><a class="header" href="#1-enable-flakes">1. Enable Flakes</a></h3>
+<p>Check if your nix has flakes enabled by running <code>nix flake</code>. It will tell you if
+it's not. To enable flakes, refer to the
+<a href="https://wiki.nixos.org/wiki/Flakes#enable-flakes">NixOS Wiki</a>.</p>
+<h3 id="2-initialize-a-flake"><a class="header" href="#2-initialize-a-flake">2. Initialize a Flake</a></h3>
+<p>The easiest way to start is to copy our
+<a href="https://github.com/nix-community/nixos-anywhere-examples/blob/main/flake.nix">example flake.nix</a>
+into a new directory. This example is tailored for a virtual machine setup
+similar to one on <a href="https://www.hetzner.com/cloud">Hetzner Cloud</a>, so you might
+need to adapt it for your setup.</p>
+<p>If you already have a flake, you can use it by adding
+<a href="https://github.com/nix-community/disko?tab=readme-ov-file#how-to-use-disko">disko configuration</a>
+to it.</p>
+<h3 id="3-configure-your-ssh-key"><a class="header" href="#3-configure-your-ssh-key">3. Configure your SSH key</a></h3>
+<p>If you cloned
+<a href="https://github.com/nix-community/nixos-anywhere-examples/blob/main/configuration.nix">our nixos-anywhere-example</a>
+you will also replace the SSH key like this: In your configuration, locate the
+line that reads:</p>
+<pre><code class="language-bash"># change this to your ssh key
+            "CHANGE"
+</code></pre>
+<p>Replace the text <code>CHANGE</code> with your own SSH key. This is crucial, as you will
+not be able to log into the target machine post-installation without it. If you
+have a .pem file you can run</p>
+<pre><code class="language-bash">ssh-keygen -y -f /path/to/your/key.pem
+</code></pre>
+<p>then paste the result in between the quotes like "ssh-rsa AAA..."</p>
+<h3 id="4-configure-storage"><a class="header" href="#4-configure-storage">4. Configure Storage</a></h3>
+<p>In the same directory, create a file called <code>disk-config.nix</code>. This file will
+define the disk layout for the
+<a href="https://github.com/nix-community/disko/blob/master/docs/INDEX.md">disko</a> tool,
+which is used by nixos-anywhere to partition, format, and mount the disks.</p>
+<p>For a basic installation, you can copy the contents from the example provided
+<a href="https://github.com/nix-community/nixos-anywhere-examples/blob/main/disk-config.nix">here</a>.
+This configuration sets up a standard GPT (GUID Partition Table) that is
+compatible with both EFI and BIOS systems and mounts the disk as <code>/dev/sda</code>. You
+may need to adjust <code>/dev/sda</code> to match the correct disk on your machine. To
+identify the disk, run the <code>lsblk</code> command and replace <code>sda</code> with the actual
+disk name.</p>
+<p>For example, on this machine, we would select <code>/dev/nvme0n1</code> as the disk:</p>
+<pre><code>NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+nvme0n1     259:0    0  1.8T  0 disk
+</code></pre>
+<p>If this setup does not match your requirements, you can choose an example that
+better suits your disk layout from the
+<a href="https://github.com/nix-community/disko/tree/master/example">disko examples</a>.
+For more detailed information, refer to the
+<a href="https://github.com/nix-community/disko">disko documentation</a>.</p>
+<h3 id="5-lock-your-flake"><a class="header" href="#5-lock-your-flake">5. Lock your Flake</a></h3>
+<pre><code>nix flake lock
+</code></pre>
+<p>This will download your flake dependencies and make a <code>flake.lock</code> file that
+describes how to reproducibly build your system.</p>
+<p>Optionally, you can commit these files to a repo such as Github, or you can
+simply reference your local directory when you run <strong>nixos-anywhere</strong>. This
+example uses a local directory on the source machine.</p>
+<h3 id="6-connectivity-to-the-target-machine"><a class="header" href="#6-connectivity-to-the-target-machine">6. Connectivity to the Target Machine</a></h3>
+<p><strong>nixos-anywhere</strong> will create a temporary SSH key to use for the installation.
+If your SSH key is not found, you will be asked for your password. If you are
+using a non-root user, you must have access to sudo without a password. To avoid
+SSH password prompts, set the <code>SSHPASS</code> environment variable to your password
+and add <code>--env-password</code> to the <code>nixos-anywhere</code> command. If providing a
+specific SSH key through <code>-i</code> (identity_file), this key will then be used for
+the installation and no temporary SSH key will be created.</p>
+<h3 id="7-optional-test-your-nixos-and-disko-configuration"><a class="header" href="#7-optional-test-your-nixos-and-disko-configuration">7. (Optional) Test your NixOS and Disko configuration</a></h3>
+<p>Skip this step and continue with Step 8, if you don't have a hardware
+configuration (hardware-configuration.nix or facter.json) generated yet or make
+sure you don't import non-existing hardware-configuration.nix or facter.json
+during running the vm test.</p>
+<p>The following command will automatically test your nixos configuration and run
+disko inside a virtual machine, where</p>
+<ul>
+<li>
+<p><code>&lt;path to configuration&gt;</code> is the path to the directory or repository
+containing <code>flake.nix</code> and <code>disk-config.nix</code></p>
+</li>
+<li>
+<p><code>&lt;configuration name&gt;</code> must match the name that immediately follows the text
+<code>nixosConfigurations.</code> in the flake, as indicated by the comment in the
+<a href="https://github.com/nix-community/nixos-anywhere-examples/blob/main/flake.nix">example</a>.</p>
+</li>
+</ul>
+<pre><code>nix run github:nix-community/nixos-anywhere -- --flake &lt;path to configuration&gt;#&lt;configuration name&gt; --vm-test
+</code></pre>
+<h3 id="8-prepare-hardware-configuration"><a class="header" href="#8-prepare-hardware-configuration">8. Prepare Hardware Configuration</a></h3>
+<p>If you're not using a virtual machine, it's recommended to allow
+<code>nixos-anywhere</code> to generate a hardware configuration during installation. This
+ensures that essential drivers, such as those required for disk detection, are
+properly configured.</p>
+<p>To enable <code>nixos-anywhere</code> to integrate its generated configuration into your
+NixOS setup, you need to include an import for the hardware configuration
+beforehand.</p>
+<p>Here’s an example:</p>
+<pre><code class="language-diff"> nixosConfigurations.generic = nixpkgs.lib.nixosSystem {
+   system = "x86_64-linux";
+   modules = [
+     disko.nixosModules.disko
+     ./configuration.nix
++    ./hardware-configuration.nix
+   ];
+ };
+</code></pre>
+<p>When running <code>nixos-anywhere</code>, this file is automatically generated by including
+the following flags in your command:
+<code>--generate-hardware-config nixos-generate-config ./hardware-configuration.nix</code>.
+The second flag, <code>./hardware-configuration.nix</code>, specifies where
+<code>nixos-generate-config</code> will store the configuration. Adjust this path to
+reflect the location where you want the <code>hardware-configuration.nix</code> for this
+machine to be saved.</p>
+<h4 id="81-nixos-facter"><a class="header" href="#81-nixos-facter">8.1 nixos-facter</a></h4>
+<p>As an alternative to <code>nixos-generate-config</code>, you can use the experimental
+<a href="https://github.com/numtide/nixos-facter">nixos-facter</a> command, which offers
+more comprehensive hardware reports and advanced configuration options.</p>
+<p>To use <code>nixos-facter</code>, add the following to your flake inputs:</p>
+<pre><code class="language-diff"> {
++ inputs.nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
+ }
+</code></pre>
+<p>Next, import the module into your configuration and specify <code>facter.json</code> as the
+path where the hardware report will be saved:</p>
+<pre><code class="language-diff"> nixosConfigurations.generic-nixos-facter = nixpkgs.lib.nixosSystem {
+   system = "x86_64-linux";
+   modules = [
+     disko.nixosModules.disko
+     ./configuration.nix
++    nixos-facter-modules.nixosModules.facter
++    { config.facter.reportPath = ./facter.json }
+   ];
+ };
+</code></pre>
+<p>To generate the configuration for <code>nixos-facter</code> with <code>nixos-anywhere</code>, use the
+following flags: <code>--generate-hardware-config nixos-facter ./facter.json</code>. The
+second flag, <code>./facter.json</code>, specifies where <code>nixos-generate-config</code> will store
+the hardware report. Adjust this path to suit the location where you want the
+<code>facter.json</code> to be saved.</p>
+<h3 id="9-run-it"><a class="header" href="#9-run-it">9. Run it</a></h3>
+<p>You can now run <strong>nixos-anywhere</strong> from the command line as shown below, where:</p>
+<ul>
+<li>
+<p><code>&lt;path to configuration&gt;</code> is the path to the directory or repository
+containing <code>flake.nix</code> and <code>disk-config.nix</code></p>
+</li>
+<li>
+<p><code>&lt;configuration name&gt;</code> must match the name that immediately follows the text
+<code>nixosConfigurations.</code> in the flake, as indicated by the comment in the
+<a href="https://github.com/nix-community/nixos-anywhere-examples/blob/main/flake.nix">example</a>.</p>
+</li>
+<li>
+<p><code>&lt;ip address&gt;</code> is the IP address of the target machine.</p>
+</li>
+</ul>
+<pre><code>nix run github:nix-community/nixos-anywhere -- --flake &lt;path to configuration&gt;#&lt;configuration name&gt; --target-host root@&lt;ip address&gt;
+</code></pre>
+<p>The command would look  like this if you had created your files in a directory
+named <code>/home/mydir/test</code> and the IP address of your target machine is
+<code>37.27.18.135</code>:</p>
+<pre><code>nix run github:nix-community/nixos-anywhere -- --flake /home/mydir/test#hetzner-cloud --target-host root@37.27.18.135
+</code></pre>
+<p>If you also need to generate hardware configuration amend flags for
+nixos-generate-config:</p>
+<pre><code>nix run github:nix-community/nixos-anywhere -- --generate-hardware-config nixos-generate-config ./hardware-configuration.nix --flake &lt;path to configuration&gt;#&lt;configuration name&gt; --target-host root@&lt;ip address&gt;
+</code></pre>
+<p>Or these flags if you are using nixos-facter instead:</p>
+<pre><code>nix run github:nix-community/nixos-anywhere -- --generate-hardware-config nixos-facter ./facter.json  --flake &lt;path to configuration&gt;#&lt;configuration name&gt; --target-host root@&lt;ip address&gt;
+</code></pre>
+<p>Adjust the location of <code>./hardware-configuration.nix</code> and <code>./facter.json</code>
+accordingly.</p>
+<p><strong>nixos-anywhere</strong> will then run, showing various output messages at each stage.
+It may take some time to complete, depending on Internet speeds. It should
+finish by showing the messages below before returning to the command prompt.</p>
+<pre><code>Installation finished. No error reported.
+Warning: Permanently added '&lt;ip-address&gt;' (ED25519) to the list of known hosts
+</code></pre>
+<p>When this happens, the target server will have been overwritten with a new
+installation of NixOS. Note that the server's public SSH key will have changed.</p>
+<p>If you have previously accessed this server using SSH, you may see the following
+message the next time you try to log in to the target.</p>
+<pre><code>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ED25519 key sent by the remote host is
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.
+Please contact your system administrator.
+Add correct host key in ~/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in ~/.ssh/known_hosts:6
+  remove with:
+  ssh-keygen -f ~/.ssh/known_hosts" -R "&lt;ip address&gt;"
+Host key for &lt;ip_address&gt; has changed and you have requested strict checking.
+Host key verification failed.
+</code></pre>
+<p>This is because the <code>known_hosts</code> file in the <code>.ssh</code> directory now contains a
+mismatch, since the server has been overwritten. To solve this, use a text
+editor to remove the old entry from the <code>known_hosts</code> file (or use the command
+<code>ssh-keygen -R &lt;ip_address&gt;</code>). The next connection attempt will then treat this
+as a new server.</p>
+<p>The error message line <code>Offending ECDSA key in ~/.ssh/known_hosts:6</code> gives the
+line number that needs to be removed from the <code>known_hosts</code> file (line 6 in this
+example).</p>
+<h1 id="finished"><a class="header" href="#finished">Finished!</a></h1>
+<p><strong>nixos-anywhere</strong>'s job is now done, as it is a tool to install NixOS onto the
+target machine.</p>
+<p>Any future changes to the configuration should be made to your flake. You would
+reference this flake when using the NixOS <code>nixos-rebuild</code> command or a separate
+3rd party deployment tool of your choice i.e.
+<a href="https://github.com/serokell/deploy-rs">deploy-rs</a>,
+<a href="https://github.com/zhaofengli/colmena">colmena</a>,
+<a href="https://github.com/MatthewCroughan/nixinate">nixinate</a>,
+<a href="https://clan.lol/">clan</a> (author's choice).</p>
+<p>To update on the machine locally (replace <code>&lt;URL to your flake&gt;</code> with your flake
+i.e. <code>.#</code> if your flake is in the current directory):</p>
+<pre><code>nixos-rebuild switch --flake &lt;URL to your flake&gt;
+</code></pre>
+<p>To update remotely you will need to have configured an
+<a href="https://search.nixos.org/options?show=services.sshd.enable">ssh server</a> and
+your ssh key for the
+<a href="https://search.nixos.org/options?show=users.users.%3Cname%3E.openssh.authorizedKeys.keys">root user</a>:</p>
+<pre><code>nixos-rebuild switch --flake &lt;URL to your flake&gt; --target-host "root@&lt;ip address&gt;"
+</code></pre>
+<p>See the Nix documentation for use of the flake
+<a href="https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake#url-like-syntax">URL-like syntax</a>.</p>
+<p>For more information on different use cases of <strong>nixos-anywhere</strong> please refer
+to the <a href="./howtos/INDEX.html">How to Guide</a>, and for more technical information and
+explanation of known error messages, refer to the
+<a href="./reference.html">Reference Manual</a>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="requirements.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="howtos/INDEX.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="requirements.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="howtos/INDEX.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
