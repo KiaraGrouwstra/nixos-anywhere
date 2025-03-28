@@ -89,4 +89,4 @@ while [[ $# -gt 0 ]]; do
   keyIdx=$((keyIdx + 1))
 done
 
-nix run --extra-experimental-features 'nix-command flakes' "path:${SCRIPT_DIR}/../..#nixos-anywhere" -- "${args[@]}"
+nix run --extra-experimental-features 'nix-command flakes' "$(readlink -f "${SCRIPT_DIR}/../..")#nixos-anywhere" -- "${args[@]}"
