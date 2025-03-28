@@ -22,8 +22,8 @@ else
     # e.g. config_attribute=config.system.build.toplevel
     config_attribute="${attribute}"
     # inject `special_args` into nixos config's `specialArgs`
-    base_config="(import ${file})"
-    nix_expr="${base_config}.extendModules { specialArgs = builtins.fromJSON ''${special_args}''; }"
+    abs_file="$(readlink -f "${file}")"
+    nix_expr="(import ${abs_file}).extendModules { specialArgs = builtins.fromJSON ''${special_args}''; }"
     # use temp file over error 'access to absolute path ... is forbidden in pure eval mode'
     tmp_dir=$(mktemp -d "${TMPDIR:-/tmp/}$(basename "$0").XXXXXXXXXXXX")
     mkdir -p "${tmp_dir}"
